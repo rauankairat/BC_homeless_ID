@@ -90,6 +90,8 @@ model Shelter {
   phone      String?
   status     ShelterStatus @default(open)
   updated_at DateTime     @updatedAt @db.Timestamptz(6)
+  latitude   Decimal?      @db.Decimal(9, 6)
+  longitude  Decimal?      @db.Decimal(9, 6)
 
   workers            Worker[]          @relation("ShelterWorkers")
   personal_infos PersonalInfo[]

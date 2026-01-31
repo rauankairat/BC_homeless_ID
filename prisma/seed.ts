@@ -137,13 +137,21 @@ async function main() {
     '321 Pandora Avenue, Victoria, BC V8W 1N6',
     '654 Fort Street, Victoria, BC V8W 1H2',
   ];
-
+  const shelterCoordinates = [
+  { latitude: 48.4284, longitude: -123.3656 }, // Downtown-ish
+  { latitude: 48.4250, longitude: -123.3697 }, // Government St area
+  { latitude: 48.4266, longitude: -123.3609 }, // Yates St area
+  { latitude: 48.4289, longitude: -123.3649 }, // Pandora Ave area
+  { latitude: 48.4260, longitude: -123.3525 }, // Fort St area
+];
   // Create Shelters with UUIDs
   const shelterMap = new Map<number, string>(); // maps shelter_id -> shelter_uuid
   
   for (let i = 0; i < uniqueShelters.length; i++) {
     const shelterUUID = generateUUID();
     const shelter = uniqueShelters[i];
+
+    const coords = shelterCoordinates[i];
     
     await prisma.shelter.create({
       data: {
@@ -152,6 +160,8 @@ async function main() {
         email: `${shelter.name.toLowerCase().replace(' ', '')}@shelter.bc.ca`,
         phone: `250-555-010${shelter.id}`,
         status: i === 2 ? ShelterStatus.temporarily_closed : ShelterStatus.open,
+        latitude: coords?.latitude,
+        longitude: coords?.longitude,
       },
     });
     

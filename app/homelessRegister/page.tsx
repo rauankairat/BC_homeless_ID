@@ -4,40 +4,53 @@ import { useState } from "react";
 import styles from "./page.module.css";
 import Link from "next/link";
 
-type HomelessPerson = {
+type PersonalInfoResponse = {
   personal_id: string;
-  photo_id: string;
+  shelter_id: string;
+  location_contact_id: string;
+  biometrics_id: string;
+  consent_id: string;
+
   first_name: string;
-  middle_name?: string;
+  middle_name: string | null;
   last_name: string;
+
   aliases: string[];
   past_names: string[];
   past_surnames: string[];
-  preferred_name?: string;
-  DOB: string;
+
+  DOB: string; // serialized ISO from server
   responsible_worker_ids: string[];
-  referees: string[];
-  consent_id: string;
+  referees: unknown;
+
+  status: "active" | "inactive" | "deceased";
+  creation_date: string;
+  update_date: string;
 };
 
 export default function RegisterHomeless() {
   const [form, setForm] = useState<Record<string, string>>({});
-  const [submitted, setSubmitted] = useState<HomelessPerson | null>(null);
+  const [submitted, setSubmitted] = useState<PersonalInfoResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  // Simple unique ID generator
-  const generateId = () => "H-" + Math.floor(Math.random() * 1000000).toString().padStart(6, "0");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const csvToArray = (value?: string) =>
+    (value ?? "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setSubmitted(null);
 
-    // Required fields check
-    const requiredFields = ["first_name", "last_name", "DOB"];
+    // Required by your schema + route handler
+    const requiredFields = ["shelter_id", "first_name", "last_name", "DOB"];
     for (const field of requiredFields) {
       if (!form[field] || !form[field].trim()) {
         setError(`Field "${field}" is required.`);
@@ -45,26 +58,46 @@ export default function RegisterHomeless() {
       }
     }
 
-    // Build HomelessPerson object
-    const person: HomelessPerson = {
-      personal_id: generateId(),
-      photo_id: generateId(),
+    const payload = {
+      shelter_id: form.shelter_id.trim(),
       first_name: form.first_name.trim(),
-      middle_name: form.middle_name?.trim() || "",
+      middle_name: form.middle_name?.trim() || undefined,
       last_name: form.last_name.trim(),
-      aliases: form.aliases ? form.aliases.split(",").map(s => s.trim()) : [],
-      past_names: form.past_names ? form.past_names.split(",").map(s => s.trim()) : [],
-      past_surnames: form.past_surnames ? form.past_surnames.split(",").map(s => s.trim()) : [],
-      preferred_name: form.preferred_name?.trim() || "",
-      DOB: form.DOB.trim(),
-      responsible_worker_ids: form.responsible_worker_ids ? form.responsible_worker_ids.split(",").map(s => s.trim()) : [],
-      referees: form.referees ? form.referees.split(",").map(s => s.trim()) : [],
-      consent_id: generateId(),
+
+      aliases: csvToArray(form.aliases),
+      past_names: csvToArray(form.past_names),
+      past_surnames: csvToArray(form.past_surnames),
+
+      DOB: form.DOB.trim(), // YYYY-MM-DD
+
+      responsible_worker_ids: csvToArray(form.responsible_worker_ids),
+
+      // `referees` is Json? in your schema.
+      // We'll store it as an array of strings from the input.
+      referees: csvToArray(form.referees),
     };
 
-    // For now, just show submitted data
-    setSubmitted(person);
-    console.log("Registered homeless person:", person);
+    try {
+      setLoading(true);
+
+      const res = await fetch("/api/personal/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const json = await res.json();
+      if (!res.ok) {
+        setError(json?.error || "Failed to register.");
+        return;
+      }
+
+      setSubmitted(json.data as PersonalInfoResponse);
+    } catch (err: any) {
+      setError(err?.message ?? "Network error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -77,18 +110,91 @@ export default function RegisterHomeless() {
         <form className={styles.card} onSubmit={handleSubmit}>
           {error && <div className={styles.alert}>{error}</div>}
 
-          <input name="first_name" placeholder="First Name" value={form.first_name || ""} onChange={handleChange} className={styles.input} />
-          <input name="middle_name" placeholder="Middle Name" value={form.middle_name || ""} onChange={handleChange} className={styles.input} />
-          <input name="last_name" placeholder="Last Name" value={form.last_name || ""} onChange={handleChange} className={styles.input} />
-          <input name="aliases" placeholder="Aliases (comma separated)" value={form.aliases || ""} onChange={handleChange} className={styles.input} />
-          <input name="past_names" placeholder="Past Names (comma separated)" value={form.past_names || ""} onChange={handleChange} className={styles.input} />
-          <input name="past_surnames" placeholder="Past Surnames (comma separated)" value={form.past_surnames || ""} onChange={handleChange} className={styles.input} />
-          <input name="preferred_name" placeholder="Preferred Name" value={form.preferred_name || ""} onChange={handleChange} className={styles.input} />
-          <input name="DOB" type="date" placeholder="Date of Birth" value={form.DOB || ""} onChange={handleChange} className={styles.input} />
-          <input name="responsible_worker_ids" placeholder="Responsible Worker IDs (comma separated)" value={form.responsible_worker_ids || ""} onChange={handleChange} className={styles.input} />
-          <input name="referees" placeholder="Referees (comma separated)" value={form.referees || ""} onChange={handleChange} className={styles.input} />
+          {/* REQUIRED by schema */}
+          <input
+            name="shelter_id"
+            placeholder="Shelter ID (UUID)"
+            value={form.shelter_id || ""}
+            onChange={handleChange}
+            className={styles.input}
+          />
 
-          <button type="submit" className={styles.primaryButton}>Register</button>
+          <input
+            name="first_name"
+            placeholder="First Name"
+            value={form.first_name || ""}
+            onChange={handleChange}
+            className={styles.input}
+          />
+
+          <input
+            name="middle_name"
+            placeholder="Middle Name"
+            value={form.middle_name || ""}
+            onChange={handleChange}
+            className={styles.input}
+          />
+
+          <input
+            name="last_name"
+            placeholder="Last Name"
+            value={form.last_name || ""}
+            onChange={handleChange}
+            className={styles.input}
+          />
+
+          <input
+            name="aliases"
+            placeholder="Aliases (comma separated)"
+            value={form.aliases || ""}
+            onChange={handleChange}
+            className={styles.input}
+          />
+
+          <input
+            name="past_names"
+            placeholder="Past Names (comma separated)"
+            value={form.past_names || ""}
+            onChange={handleChange}
+            className={styles.input}
+          />
+
+          <input
+            name="past_surnames"
+            placeholder="Past Surnames (comma separated)"
+            value={form.past_surnames || ""}
+            onChange={handleChange}
+            className={styles.input}
+          />
+
+          <input
+            name="DOB"
+            type="date"
+            placeholder="Date of Birth"
+            value={form.DOB || ""}
+            onChange={handleChange}
+            className={styles.input}
+          />
+
+          <input
+            name="responsible_worker_ids"
+            placeholder="Responsible Worker IDs (UUIDs, comma separated)"
+            value={form.responsible_worker_ids || ""}
+            onChange={handleChange}
+            className={styles.input}
+          />
+
+          <input
+            name="referees"
+            placeholder="Referees (comma separated)"
+            value={form.referees || ""}
+            onChange={handleChange}
+            className={styles.input}
+          />
+
+          <button type="submit" className={styles.primaryButton} disabled={loading}>
+            {loading ? "Registering..." : "Register"}
+          </button>
         </form>
 
         {submitted && (
@@ -99,7 +205,9 @@ export default function RegisterHomeless() {
         )}
 
         <div style={{ marginTop: "20px" }}>
-          <Link href="/" className={styles.link}>Back to Home</Link>
+          <Link href="/" className={styles.link}>
+            Back to Home
+          </Link>
         </div>
       </section>
     </main>

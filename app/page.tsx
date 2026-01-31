@@ -1,75 +1,73 @@
 "use client";
 
-import { useState } from "react";
 import { mockPackages } from "./data/mockPackages";
 import Link from "next/link";
 
-export default function Home() {
+import { useEffect, useState } from "react";
+
+type Shelter = {
+  shelter_id: string;
+  address: string;
+  email: string | null;
+  phone: string | null;
+  status: "open" | "closed" | string;
+  latitude: number | null;
+  longitude: number | null;
+  updated_at: string;
+};
+
+export default function HomePage() {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState(mockPackages);
+  const [results, setResults] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const [shelters, setShelters] = useState<Shelter[]>([]);
+  const [sheltersLoading, setSheltersLoading] = useState(true);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setQuery(value);
+    setQuery(e.target.value);
+  };
 
-    if (!value) {
-      setResults(mockPackages);
+  useEffect(() => {
+    const q = query.trim();
+
+    if (!q) {
+      setResults([]);
       return;
     }
 
-    const filtered = mockPackages.filter(
-      (pkg) =>
-        pkg.personal_id.toLowerCase().includes(value.toLowerCase()) ||
-        pkg.package_id.toLowerCase().includes(value.toLowerCase()) ||
-        pkg.recipient_name.toLowerCase().includes(value.toLowerCase())
-    );
+    const t = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/packages/search?q=${encodeURIComponent(q)}`);
+        setResults(await res.json());
+      } catch (e) {
+        setResults([]);
+      } finally {
+        setLoading(false);
+      }
+    }, 300);
 
-    setResults(filtered);
-  };
+    return () => clearTimeout(t);
+  }, [query]);
 
-  // Victoria BC Homeless Shelters
-  const shelters = [
-    {
-      id: 1,
-      name: "Our Place Society",
-      address: "919 Pandora Ave, Victoria, BC",
-      lat: 48.4284,
-      lng: -123.3656,
-      services: "Meals, Showers, Health Services, Housing Support",
-    },
-    {
-      id: 2,
-      name: "The Mustard Seed",
-      address: "625 Queens Ave, Victoria, BC",
-      lat: 48.4312,
-      lng: -123.3589,
-      services: "Emergency Shelter, Meals, Support Programs",
-    },
-    {
-      id: 3,
-      name: "Cool Aid Community Health Centre",
-      address: "713 Johnson St, Victoria, BC",
-      lat: 48.4275,
-      lng: -123.3621,
-      services: "Healthcare, Housing Support, Outreach",
-    },
-    {
-      id: 4,
-      name: "Victoria Native Friendship Centre",
-      address: "231 Regina Ave, Victoria, BC",
-      lat: 48.4398,
-      lng: -123.3542,
-      services: "Cultural Support, Housing Programs, Community Services",
-    },
-    {
-      id: 5,
-      name: "Beacon Community Services",
-      address: "3318 Oak St, Victoria, BC",
-      lat: 48.4521,
-      lng: -123.3298,
-      services: "Transitional Housing, Mental Health Support",
-    },
-  ];
+  useEffect(() => {
+    (async () => {
+      setSheltersLoading(true);
+      try {
+        // Optional filter: ?status=open
+        const res = await fetch("/api/shelters?status=open", { cache: "no-store" });
+        const data = await res.json();
+
+        // Defensive: ensure array
+        setShelters(Array.isArray(data) ? data : []);
+      } catch (e) {
+        setShelters([]);
+      } finally {
+        setSheltersLoading(false);
+      }
+    })();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
@@ -184,18 +182,13 @@ export default function Home() {
         </div>
       </main>
 
-      {/* Shelters Map Section */}
+      {/* Shelters Section */}
       <section className="w-full bg-white py-16">
         <div className="mx-auto max-w-7xl px-6">
           <h2 className="mb-4 text-center text-3xl font-semibold">
             Victoria BC Homeless Shelters & Services
           </h2>
-          <p className="mx-auto mb-12 max-w-2xl text-center text-gray-600">
-            Find nearby shelters and support services in the Greater Victoria
-            area
-          </p>
 
-          {/* Map */}
           <div className="mb-12 h-[600px] overflow-hidden rounded-lg border border-gray-200 shadow-lg">
             <iframe
               src="https://www.google.com/maps/d/u/0/embed?mid=1i6_vj511WmdhEkQ7KWRBwEZQ0xXqOKQ&ehbc=2E312F"
@@ -209,6 +202,7 @@ export default function Home() {
             />
           </div>
 
+<<<<<<< HEAD
           {/* Shelter List */}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {shelters.map((shelter) => (
@@ -235,6 +229,67 @@ export default function Home() {
               </div>
             ))}
           </div>
+=======
+          {sheltersLoading ? (
+            <p className="text-center text-gray-500">Loading shelters…</p>
+          ) : (
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {shelters.map((shelter) => {
+                const hasCoords = shelter.latitude != null && shelter.longitude != null;
+
+                return (
+                  <div key={shelter.shelter_id} className="rounded-lg border border-gray-200 bg-gray-50 p-5 transition-shadow hover:shadow-md">
+                    <h3 className="mb-2 text-lg font-semibold">
+                      Shelter {shelter.shelter_id.slice(0, 8)}
+                    </h3>
+
+                    <p className="mb-2 text-sm text-gray-600">{shelter.address}</p>
+
+                    {/* Contacts */}
+                    <div className="mb-3 space-y-1 text-sm text-gray-700">
+                      {shelter.email && (
+                        <p>
+                          <span className="font-medium">Email:</span>{" "}
+                          <a href={`mailto:${shelter.email}`} className="text-blue-600 hover:underline">
+                            {shelter.email}
+                          </a>
+                        </p>
+                      )}
+
+                      {shelter.phone && (
+                        <p>
+                          <span className="font-medium">Phone:</span>{" "}
+                          <a href={`tel:${shelter.phone}`} className="text-blue-600 hover:underline">
+                            {shelter.phone}
+                          </a>
+                        </p>
+                      )}
+
+                      {!shelter.email && !shelter.phone && (
+                        <p className="text-gray-500">No contact info available</p>
+                      )}
+                    </div>
+
+                    {hasCoords ? (
+                      <a
+                        href={`https://www.google.com/maps/search/?api=1&query=${shelter.latitude},${shelter.longitude}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block text-sm font-medium text-blue-600 hover:text-blue-800"
+                      >
+                        Get Directions →
+                      </a>
+                    ) : (
+                      <span className="inline-block text-sm text-gray-500">
+                        No coordinates on file
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+>>>>>>> 6e97cb3 (backend integration package + map + profile + register)
         </div>
       </section>
 
@@ -245,3 +300,5 @@ export default function Home() {
     </div>
   );
 }
+
+  
