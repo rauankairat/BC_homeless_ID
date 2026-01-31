@@ -39,6 +39,7 @@ export default function Home() {
 
           <div className="hidden gap-6 text-sm md:flex">
             <Link href="/" className="text-gray-700 hover:text-black">Home</Link>
+            <Link href="/display" className="text-gray-700 hover:text-black">Display</Link>
             <Link href="/profile" className="text-gray-700 hover:text-black">Profile Lookup</Link>
             <Link href="/registration" className="text-gray-700 hover:text-black">Registration</Link>
             <Link href="/login" className="text-gray-700 hover:text-black">Login</Link>
@@ -98,18 +99,18 @@ export default function Home() {
 
         {/* Actions */}
         <div className="mt-10 flex flex-wrap justify-center gap-4">
-          <a
-            href="#"
+          <Link
+            href="profile"
             className="rounded-md border border-black px-6 py-3 text-sm font-medium hover:bg-black hover:text-white"
           >
             Profile Lookup
-          </a>
-          <a
-            href="/registration"
+          </Link>
+          <Link
+            href="/homelessRegister"
             className="rounded-md bg-black px-6 py-3 text-sm font-medium text-white hover:bg-gray-800"
           >
             Register Individual
-          </a>
+          </Link>
         </div>
       </main>
 

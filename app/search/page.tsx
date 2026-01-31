@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 "use client";
 
 import { useState } from "react";
@@ -65,5 +64,3 @@ export default function PackageLookup() {
     </div>
   );
 }
-=======
->>>>>>> 93c06fe (push)
