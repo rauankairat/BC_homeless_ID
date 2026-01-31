@@ -158,14 +158,15 @@ export default function Home() {
 
         {/* Actions */}
         <div className="mt-10 flex flex-wrap justify-center gap-4">
+          {/* ➕ Add Package */}
           <Link
-            href="/profile"
+            href="/package"
             className="rounded-md border border-black px-6 py-3 text-sm font-medium hover:bg-black hover:text-white"
           >
-            Profile Lookup
+            Add Package
           </Link>
 
-          {/* ✅ Face Verification button */}
+          {/* Face Verification */}
           <Link
             href="/identify"
             className="rounded-md bg-blue-600 px-6 py-3 text-sm font-medium text-white hover:bg-blue-700"
@@ -173,6 +174,7 @@ export default function Home() {
             Face Verification
           </Link>
 
+          {/* Register Individual */}
           <Link
             href="/homelessRegister"
             className="rounded-md bg-black px-6 py-3 text-sm font-medium text-white hover:bg-gray-800"
@@ -215,7 +217,9 @@ export default function Home() {
                 className="rounded-lg border border-gray-200 bg-gray-50 p-5 transition-shadow hover:shadow-md"
               >
                 <h3 className="mb-2 text-lg font-semibold">{shelter.name}</h3>
-                <p className="mb-2 text-sm text-gray-600">{shelter.address}</p>
+                <p className="mb-2 text-sm text-gray-600">
+                  {shelter.address}
+                </p>
                 <p className="mb-3 text-sm text-gray-700">
                   <span className="font-medium">Services:</span>{" "}
                   {shelter.services}
