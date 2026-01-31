@@ -131,19 +131,20 @@ async function main() {
 
   // Shelter addresses for Victoria, BC only
   const shelterAddresses = [
-    '123 Douglas Street, Victoria, BC V8W 2E8',
-    '456 Government Street, Victoria, BC V8V 2K8',
-    '789 Yates Street, Victoria, BC V8W 1L4',
-    '321 Pandora Avenue, Victoria, BC V8W 1N6',
-    '654 Fort Street, Victoria, BC V8W 1H2',
-  ];
-  const shelterCoordinates = [
-  { latitude: 48.4284, longitude: -123.3656 }, // Downtown-ish
-  { latitude: 48.4250, longitude: -123.3697 }, // Government St area
-  { latitude: 48.4266, longitude: -123.3609 }, // Yates St area
-  { latitude: 48.4289, longitude: -123.3649 }, // Pandora Ave area
-  { latitude: 48.4260, longitude: -123.3525 }, // Fort St area
-];
+    '919 Pandora Ave, Victoria, BC V8V 3P4',
+    '231 Regina Ave, Victoria, BC V8Z 1J6',
+    '625 Queens Ave, Victoria, BC V8T 1L9',
+    '713 Johnson St, Victoria, BC V8W 1M8',
+    '3318 Oak St, Victoria, BC V8X 1R1',
+    ];
+
+    const shelterCoordinates = [
+    { latitude: 48.42707167431433, longitude: -123.35754899139857 },
+    { latitude: 48.45570740913268, longitude: -123.38884776020376 },
+    { latitude: 48.434116338983365, longitude: -123.3661472086014 },
+    { latitude: 48.42710160677103, longitude: -123.36391020674503 },
+    { latitude: 48.45116561193978, longitude: -123.37233085278453 },
+    ];
   // Create Shelters with UUIDs
   const shelterMap = new Map<number, string>(); // maps shelter_id -> shelter_uuid
   
