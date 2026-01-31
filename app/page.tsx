@@ -202,34 +202,6 @@ export default function HomePage() {
             />
           </div>
 
-<<<<<<< HEAD
-          {/* Shelter List */}
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {shelters.map((shelter) => (
-              <div
-                key={shelter.id}
-                className="rounded-lg border border-gray-200 bg-gray-50 p-5 transition-shadow hover:shadow-md"
-              >
-                <h3 className="mb-2 text-lg font-semibold">{shelter.name}</h3>
-                <p className="mb-2 text-sm text-gray-600">
-                  {shelter.address}
-                </p>
-                <p className="mb-3 text-sm text-gray-700">
-                  <span className="font-medium">Services:</span>{" "}
-                  {shelter.services}
-                </p>
-                <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${shelter.lat},${shelter.lng}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block text-sm font-medium text-blue-600 hover:text-blue-800"
-                >
-                  Get Directions →
-                </a>
-              </div>
-            ))}
-          </div>
-=======
           {sheltersLoading ? (
             <p className="text-center text-gray-500">Loading shelters…</p>
           ) : (
@@ -289,7 +261,6 @@ export default function HomePage() {
               })}
             </div>
           )}
->>>>>>> 6e97cb3 (backend integration package + map + profile + register)
         </div>
       </section>
 

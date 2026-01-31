@@ -4,6 +4,12 @@ import { useEffect, useRef, useState } from "react";
 
 type FaceApi = typeof import("face-api.js");
 
+type PeopleIndex = {
+  ok: boolean;
+  people: { biometrics_id: string; photos: string[] }[];
+  error?: string;
+};
+
 export default function FaceDetection() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -20,7 +26,6 @@ export default function FaceDetection() {
       try {
         const faceapi: FaceApi = await import("face-api.js");
 
-        // Load models from /public/models
         await Promise.all([
           faceapi.nets.ssdMobilenetv1.loadFromUri("/models"),
           faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
@@ -39,15 +44,14 @@ export default function FaceDetection() {
           return;
         }
 
-        // Start webcam
         const stream = await navigator.mediaDevices.getUserMedia({
           video: true,
           audio: false,
         });
+
         streamRef.current = stream;
         video.srcObject = stream;
 
-        // Wait until video has dimensions
         await new Promise<void>((resolve) => {
           const onLoaded = () => {
             video.removeEventListener("loadedmetadata", onLoaded);
@@ -58,30 +62,31 @@ export default function FaceDetection() {
 
         if (cancelled) return;
 
-        setStatus("Loading enrolled labels...");
+        setStatus("Loading enrolled photos...");
 
         const labeledFaceDescriptors = await getLabeledFaceDescriptions(faceapi);
+
         if (cancelled) return;
 
         if (labeledFaceDescriptors.length === 0) {
-          setStatus('No enrolled people yet. Use "Register New Person" below.');
-          // Still keep camera running; user can enroll now.
+          setStatus('No enrolled people yet. Enroll photos first.');
         } else {
           setStatus("Running...");
         }
 
-        const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors);
+        const faceMatcher =
+          labeledFaceDescriptors.length > 0
+            ? new faceapi.FaceMatcher(labeledFaceDescriptors)
+            : null;
 
         const displaySize = {
           width: video.videoWidth || video.width,
           height: video.videoHeight || video.height,
         };
 
-        // Match canvas size to video stream pixels (prevents box offset)
         canvas.width = displaySize.width;
         canvas.height = displaySize.height;
 
-        // Clear old loop if any
         if (intervalRef.current) window.clearInterval(intervalRef.current);
 
         intervalRef.current = window.setInterval(async () => {
@@ -96,10 +101,11 @@ export default function FaceDetection() {
 
           const ctx = canvasRef.current.getContext("2d");
           if (!ctx) return;
+
           ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-          // If no enrolled labels, just draw boxes (no names)
-          if (labeledFaceDescriptors.length === 0) {
+          // No enrollments: draw only boxes
+          if (!faceMatcher) {
             faceapi.draw.drawDetections(canvasRef.current, resized);
             return;
           }
@@ -111,8 +117,10 @@ export default function FaceDetection() {
             if (!box) return;
 
             const drawBox = new faceapi.draw.DrawBox(box, {
+              // label is biometrics_id (or "unknown")
               label: result.toString(),
             });
+
             drawBox.draw(canvasRef.current!);
           });
         }, 120);
@@ -149,7 +157,7 @@ export default function FaceDetection() {
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <div className="relative w-[600px] h-[450px] overflow-hidden rounded-md border bg-black">
+      <div className="relative h-[450px] w-[600px] overflow-hidden rounded-md border bg-black">
         <video
           ref={videoRef}
           width={600}
@@ -159,10 +167,7 @@ export default function FaceDetection() {
           muted
           className="h-full w-full object-cover"
         />
-        <canvas
-          ref={canvasRef}
-          className="pointer-events-none absolute inset-0"
-        />
+        <canvas ref={canvasRef} className="pointer-events-none absolute inset-0" />
       </div>
 
       <div className="text-sm text-gray-600">{status}</div>
@@ -171,37 +176,37 @@ export default function FaceDetection() {
 }
 
 async function getLabeledFaceDescriptions(faceapi: FaceApi) {
-  // Reads: /public/labels/index.json
-  // Example content: { "Rauan": 3, "Max": 2 }
-  const res = await fetch("/labels/index.json", { cache: "no-store" });
-
-  // If index.json missing, treat as empty (no enrollments yet)
+  const res = await fetch("/api/photos/index", { cache: "no-store" });
   if (!res.ok) return [];
 
-  const index: Record<string, number> = await res.json();
-  const labels = Object.keys(index);
+  const data = await res.json();
+  if (!data.ok) return [];
 
-  return Promise.all(
-    labels.map(async (label) => {
+  const people = data.people ?? [];
+
+  const labeled = await Promise.all(
+    people.map(async (p: { name: string; photos: string[] }) => {
       const descriptions: Float32Array[] = [];
-      const count = index[label] ?? 0;
 
-      for (let i = 1; i <= count; i++) {
-        const img = await faceapi.fetchImage(`/labels/${label}/${i}.png`);
-        const det = await faceapi
-          .detectSingleFace(img)
-          .withFaceLandmarks()
-          .withFaceDescriptor();
+      for (const url of p.photos) {
+        try {
+          const img = await faceapi.fetchImage(url);
+          const det = await faceapi
+            .detectSingleFace(img)
+            .withFaceLandmarks()
+            .withFaceDescriptor();
 
-        if (!det) {
-          console.warn(`No face found in /labels/${label}/${i}.png`);
-          continue;
-        }
-
-        descriptions.push(det.descriptor);
+          if (!det) continue;
+          descriptions.push(det.descriptor);
+        } catch {}
       }
 
-      return new faceapi.LabeledFaceDescriptors(label, descriptions);
+      if (descriptions.length === 0) return null;
+
+      // ✅ label is NAME now
+      return new faceapi.LabeledFaceDescriptors(p.name, descriptions);
     })
   );
+
+  return labeled.filter((x): x is NonNullable<typeof x> => Boolean(x));
 }

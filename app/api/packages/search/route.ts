@@ -1,6 +1,6 @@
 // FILE: src/app/api/packages/search/route.ts
 import { NextResponse } from "next/server";
-import { db  } from "@/lib/prisma";
+import { db } from "@/lib/prisma";
 
 const isUuid = (s: string) =>
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(s);
@@ -30,17 +30,30 @@ export async function GET(req: Request) {
               },
             },
           },
-      include: { personal: { select: { first_name: true, last_name: true } } },
+
+      // ✅ select ONLY what you want to output
+      select: {
+        personal: {
+          select: {
+            biometrics_id: true,
+            first_name: true,
+            last_name: true,
+          },
+        },
+      },
+
       take: 50,
     });
 
+    // ✅ output ONLY person + biometrics_id
     return NextResponse.json(
-      packages.map((p) => ({
-        package_id: p.package_id,
-        personal_id: p.personal_id,
-        recipient_name: `${p.personal.first_name} ${p.personal.last_name}`,
-        status: p.status,
-      }))
+      packages
+        .map((p) => p.personal)
+        .filter((x): x is NonNullable<typeof x> => Boolean(x))
+        .map((p) => ({
+          biometrics_id: p.biometrics_id,
+          person: `${p.first_name} ${p.last_name}`.trim(),
+        }))
     );
   } catch (err) {
     console.error("packages/search failed:", err);

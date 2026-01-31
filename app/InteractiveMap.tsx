@@ -97,7 +97,6 @@ export default function InteractiveMap({ shelters, highlightedShelterId }: Inter
               <strong style="font-size: 14px;">${shelter.name}</strong><br/>
               <span style="font-size: 12px; color: #666;">${shelter.address}</span><br/>
               <span style="font-size: 12px; margin-top: 4px; display: block;">
-                <strong>Services:</strong> ${shelter.services}
               </span>
               ${isHighlighted ? '<br/><span style="color: #ef4444; font-weight: bold;">📬 Mail Location</span>' : ''}
             </div>
