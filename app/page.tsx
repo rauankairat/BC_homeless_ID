@@ -28,6 +28,50 @@ export default function Home() {
     setResults(filtered);
   };
 
+  // Victoria BC Homeless Shelters
+  const shelters = [
+    {
+      id: 1,
+      name: "Our Place Society",
+      address: "919 Pandora Ave, Victoria, BC",
+      lat: 48.4284,
+      lng: -123.3656,
+      services: "Meals, Showers, Health Services, Housing Support"
+    },
+    {
+      id: 2,
+      name: "The Mustard Seed",
+      address: "625 Queens Ave, Victoria, BC",
+      lat: 48.4312,
+      lng: -123.3589,
+      services: "Emergency Shelter, Meals, Support Programs"
+    },
+    {
+      id: 3,
+      name: "Cool Aid Community Health Centre",
+      address: "713 Johnson St, Victoria, BC",
+      lat: 48.4275,
+      lng: -123.3621,
+      services: "Healthcare, Housing Support, Outreach"
+    },
+    {
+      id: 4,
+      name: "Victoria Native Friendship Centre",
+      address: "231 Regina Ave, Victoria, BC",
+      lat: 48.4398,
+      lng: -123.3542,
+      services: "Cultural Support, Housing Programs, Community Services"
+    },
+    {
+      id: 5,
+      name: "Beacon Community Services",
+      address: "3318 Oak St, Victoria, BC",
+      lat: 48.4521,
+      lng: -123.3298,
+      services: "Transitional Housing, Mental Health Support"
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
       {/* Navbar */}
@@ -62,7 +106,7 @@ export default function Home() {
         <div className="mt-12 w-full max-w-xl">
           <input
             type="text"
-            placeholder="Search by name, ID or package numeber"
+            placeholder="Search by name, ID or package number"
             value={query}
             onChange={handleSearch}
             className="w-full rounded-md border border-gray-300 px-4 py-3 text-sm focus:border-black focus:outline-none"
@@ -113,6 +157,60 @@ export default function Home() {
           </Link>
         </div>
       </main>
+
+      {/* Shelters Map Section */}
+      <section className="w-full bg-white py-16">
+        <div className="mx-auto max-w-7xl px-6">
+          <h2 className="text-3xl font-semibold text-center mb-4">
+            Victoria BC Homeless Shelters & Services
+          </h2>
+          <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+            Find nearby shelters and support services in the Greater Victoria area
+          </p>
+
+          {/* Map */}
+          <div className="rounded-lg overflow-hidden shadow-lg border border-gray-200 h-[600px] mb-12">
+            <iframe
+              src="https://www.google.com/maps/d/u/0/embed?mid=1i6_vj511WmdhEkQ7KWRBwEZQ0xXqOKQ&ehbc=2E312F"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Victoria BC Homeless Shelters Map"
+            ></iframe>
+          </div>
+
+
+
+          {/* Shelter List */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {shelters.map((shelter) => (
+              <div
+                key={shelter.id}
+                className="border border-gray-200 rounded-lg p-5 bg-gray-50 hover:shadow-md transition-shadow"
+              >
+                <h3 className="font-semibold text-lg mb-2">{shelter.name}</h3>
+                <p className="text-sm text-gray-600 mb-2">
+                  {shelter.address}
+                </p>
+                <p className="text-sm text-gray-700 mb-3">
+                  <span className="font-medium">Services:</span> {shelter.services}
+                </p>
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${shelter.lat},${shelter.lng}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block text-sm text-blue-600 hover:text-blue-800 font-medium"
+                >
+                  Get Directions →
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Footer */}
       <footer className="border-t bg-white py-6 text-center text-xs text-gray-500">
