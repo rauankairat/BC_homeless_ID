@@ -39,4 +39,20 @@ next-env.d.ts
 
 /app/generated/prisma
 
-# Local Postgres data (never commit)
+.postgres/
+.env
+.env.*
+!.env.example
+prisma/.env
+prisma/.env.*
+node_modules/.prisma/
+.prisma/
+prisma/*.db
+prisma/*.db-journal
+prisma/*.db-wal
+prisma/*.db-shm
+prisma/dev.db*
+prisma/*.log
+*.sql
+*.dump
+*.bak

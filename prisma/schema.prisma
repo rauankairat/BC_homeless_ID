@@ -10,15 +10,219 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url    = env("DATABASE_URL")
+}
+
+enum PersonalStatus {
+  active
+  inactive
+  deceased
+}
+
+model PersonalInfo {
+  personal_id   String @id @db.Uuid
+
+  shelter_id    String @db.Uuid
+  location_contact_id String  @unique @db.Uuid
+  biometrics_id String @unique @db.Uuid
+  consent_id    String @unique @db.Uuid
+  location_contact LocationContact?
+
+
+  first_name    String
+  middle_name   String?
+  last_name     String
+
+  aliases       String[] @default([])
+  past_names    String[] @default([])
+  past_surnames String[] @default([])
+
+  DOB                    DateTime @db.Date
+  responsible_worker_ids String[] @db.Uuid
+  referees               Json?
+
+  status        PersonalStatus @default(active)
+  creation_date DateTime       @default(now()) @db.Timestamptz(6)
+  update_date   DateTime       @updatedAt @db.Timestamptz(6)
+
+  biometrics Biometrics @relation(fields: [biometrics_id], references: [biometrics_id], onDelete: Restrict, onUpdate: Cascade)
+  consent    Consent    @relation(fields: [consent_id], references: [consent_id], onDelete: Restrict, onUpdate: Cascade)
+  shelter    Shelter    @relation(fields: [shelter_id], references: [shelter_id], onDelete: Restrict, onUpdate: Cascade)
+  packages   Package[]
+
+  @@map("personal_info")
+}
+
+model Biometrics {
+  biometrics_id    String    @id @db.Uuid
+
+  photo_id         String    @db.Uuid
+  photo_updated_at DateTime? @db.Timestamptz(6)
+
+  special_features  String?  @db.Text
+  height                   Decimal?  @db.Decimal(5, 2)
+  weight                   Decimal?  @db.Decimal(6, 2)
+  eye_color                String?
+  fingerprint_ref_number   String?   // not an FK
+  updated_at               DateTime   @updatedAt @db.Timestamptz(6)
+  personal_info    PersonalInfo?
+  
+
+  @@map("biometrics")
+}
+
+model Consent {
+  consent_id     String @id @db.Uuid
+  personal_info  PersonalInfo?
+
+  @@map("consent")
+}
+
+enum ShelterStatus {
+  open
+  closed
+  temporarily_closed
+}
+
+model Shelter {
+  shelter_id String       @id @db.Uuid
+  address    String       @db.Text
+  email      String?
+  phone      String?
+  status     ShelterStatus @default(open)
+  updated_at DateTime     @updatedAt @db.Timestamptz(6)
+
+  workers            Worker[]          @relation("ShelterWorkers")
+  personal_infos PersonalInfo[]
+  packages   Package[]
+  verification_logs  VerificationLog[]
+
+  @@map("shelter")
+  @@index([status])
 }
 
 
-model User {
-  id        String   @id @default(cuid())
-  username     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum ContactPreference {
+  phone
+  sms
+  email
+}
+
+model LocationContact {
+  personal_id    String            @id @db.Uuid
+
+  phone_number   String?
+  phone_number2  String?
+  email          String?
+  email2         String?
+
+  preferred      ContactPreference?
+
+  personal       PersonalInfo @relation(fields: [personal_id], references: [personal_id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("location_contact")
+}
+
+
+
+
+
+
+enum PackageStatus {
+  pending
+  received
+  ready
+  handed_out
+  returned
+  lost
+  cancelled
+}
+
+enum Operator {
+  canada_post
+  purolator
+  fedex
+  ups
+  dhl
+  canpar
+  loomis
+  gls
+  intelcom
+  amazon_logistics
+  other
+}
+
+model Package {
+  package_id           String        @id @db.Uuid
+  personal_id          String        @db.Uuid
+  shelter_id           String        @db.Uuid
+  operator             Operator
+  status               PackageStatus @default(pending)
+
+  arrival_date         DateTime?     @db.Timestamptz(6)
+  expected_at          DateTime?     @db.Timestamptz(6)
+  handout_date         DateTime?     @db.Timestamptz(6)
+
+  verification_log_id  String        @db.Uuid
+
   
+  personal             PersonalInfo  @relation(fields: [personal_id], references: [personal_id], onDelete: Restrict, onUpdate: Cascade)
+  shelter              Shelter       @relation(fields: [shelter_id], references: [shelter_id], onDelete: Restrict, onUpdate: Cascade)
+  verification_log     VerificationLog @relation(fields: [verification_log_id], references: [verification_log_id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@map("package")
+  @@index([personal_id])
+  @@index([shelter_id])
+  @@index([verification_log_id])
+  @@index([status])
+  @@index([arrival_date])
+  @@index([expected_at])
+  @@index([handout_date])
+}
+
+model VerificationLog {
+  verification_log_id       String   @id @db.Uuid
+  shelter_id                String   @db.Uuid
+  personal_id               String?  @db.Uuid
+  worker_id                 String   @db.Uuid
+  documents_ids_provided    String[] @default([])
+  confidence_level          Int      @db.SmallInt // 1-5
+  verification_date         DateTime @default(now()) @db.Timestamptz(6)
+  result                    VerificationResult
+  
+  shelter                   Shelter  @relation(fields: [shelter_id], references: [shelter_id], onDelete: Restrict, onUpdate: Cascade)
+  worker                    Worker   @relation(fields: [worker_id], references: [worker_id], onDelete: Restrict, onUpdate: Cascade)
+  packages                  Package[]
+
+  @@map("verification_log")
+  @@index([shelter_id])
+  @@index([worker_id])
+  @@index([verification_date])
+  @@index([result])
+}
+
+
+enum VerificationResult {
+  accepted
+  rejected
+}
+
+model Worker {
+  worker_id        String   @id @db.Uuid
+  shelter_id       String   @db.Uuid
+  first_name       String
+  last_name        String
+  email            String?  @unique
+  phone            String?
+  hashed_password  String
+  active           Boolean  @default(true)
+  created_at       DateTime @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime @updatedAt @db.Timestamptz(6)
+
+  shelter           Shelter  @relation("ShelterWorkers", fields: [shelter_id], references: [shelter_id], onDelete: Restrict, onUpdate: Cascade)
+  verification_logs VerificationLog[]
+
+  @@map("worker")
+  @@index([active])
+  @@index([email])
+  @@index([shelter_id])
 }
