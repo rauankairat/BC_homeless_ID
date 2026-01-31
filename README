@@ -1,0 +1,5 @@
+init posgtres in .posgtres/ 
+port 5433
+user worker
+password worker
+database postgres
