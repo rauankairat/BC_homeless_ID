@@ -68,6 +68,7 @@ export default function ProfileLookupPage() {
 
       <section className={styles.container} aria-label="Profile lookup">
         <div className={styles.card}>
+            <Link href="/" className={styles.link} style={{ marginBottom: "12px", display: "inline-block" }}>← Back to Home</Link>
           <h1 className={styles.title}>Find a profile</h1>
           <p className={styles.subtitle}>
             Search by an authorized identifier (internal ID). Access is logged.

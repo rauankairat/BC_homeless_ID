@@ -1,55 +1,56 @@
+/* page.module.css - works for both login & registration */
 .page {
     min-height: 100vh;
     background: #f6f7f9;
     color: #0b1f33;
-  }
-  
-  .header {
+}
+
+.header {
     background: #ffffff;
     border-bottom: 1px solid #e4e8ee;
-  }
-  
-  .brand {
+}
+
+.brand {
     max-width: 980px;
     margin: 0 auto;
     padding: 18px 20px;
     display: flex;
     align-items: center;
     gap: 12px;
-  }
-  
-  .brandMark {
+}
+
+.brandMark {
     width: 34px;
     height: 34px;
     border-radius: 6px;
     background: #0b3a6a;
-  }
-  
-  .brandText {
+}
+
+.brandText {
     line-height: 1.2;
-  }
-  
-  .govName {
+}
+
+.govName {
     font-size: 13px;
     letter-spacing: 0.02em;
     color: #2b3e55;
-  }
-  
-  .appName {
+}
+
+.appName {
     font-size: 16px;
     font-weight: 700;
     color: #0b1f33;
-  }
-  
-  .container {
+}
+
+.container {
     max-width: 980px;
     margin: 0 auto;
     padding: 36px 20px;
     display: flex;
     justify-content: center;
-  }
-  
-  .card {
+}
+
+.card {
     width: 100%;
     max-width: 520px;
     background: #ffffff;
@@ -57,20 +58,20 @@
     border-radius: 14px;
     padding: 26px 26px 22px;
     box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
-  }
-  
-  .title {
+}
+
+.title {
     font-size: 24px;
     margin: 0 0 6px;
-  }
-  
-  .subtitle {
+}
+
+.subtitle {
     margin: 0 0 18px;
     color: #40576f;
     font-size: 14px;
-  }
-  
-  .alert {
+}
+
+.alert {
     border: 1px solid #f1b7b7;
     background: #fff5f5;
     color: #7a1f1f;
@@ -78,25 +79,25 @@
     padding: 10px 12px;
     margin-bottom: 14px;
     font-size: 14px;
-  }
-  
-  .form {
+}
+
+.form {
     display: grid;
     gap: 14px;
-  }
-  
-  .field {
+}
+
+.field {
     display: grid;
     gap: 6px;
-  }
-  
-  .label {
+}
+
+.label {
     font-size: 14px;
     font-weight: 600;
     color: #0b1f33;
-  }
-  
-  .input {
+}
+
+.input {
     width: 100%;
     border: 1px solid #cfd8e3;
     border-radius: 10px;
@@ -104,18 +105,18 @@
     font-size: 15px;
     background: #ffffff;
     color: #0b1f33;
-  }
-  
-  .input::placeholder {
+}
+
+.input::placeholder {
     color: #7b8ea3;
-  }
-  
-  .input:focus {
+}
+
+.input:focus {
     outline: 3px solid rgba(11, 58, 106, 0.25);
     border-color: #0b3a6a;
-  }
-  
-  .primaryButton {
+}
+
+.primaryButton {
     width: 100%;
     border: none;
     border-radius: 10px;
@@ -125,54 +126,53 @@
     background: #0b3a6a;
     color: #ffffff;
     cursor: pointer;
-  }
-  
-  .primaryButton:disabled {
+}
+
+.primaryButton:disabled {
     opacity: 0.65;
     cursor: not-allowed;
-  }
-  
-  .linksRow {
+}
+
+.linksRow {
     display: flex;
     justify-content: space-between;
     gap: 14px;
     font-size: 14px;
-  }
-  
-  .link {
+}
+
+.link {
     color: #0b3a6a;
     text-decoration: underline;
     text-underline-offset: 3px;
-  }
-  
-  .helpText {
+}
+
+.helpText {
     margin: 4px 0 0;
     font-size: 12px;
     color: #566b82;
-  }
-  
-  .footer {
+}
+
+.footer {
     margin-top: 12px;
     padding: 18px 20px 26px;
     color: #5c728a;
-  }
-  
-  .footerInner {
+}
+
+.footerInner {
     max-width: 980px;
     margin: 0 auto;
     display: flex;
     align-items: center;
     gap: 10px;
     font-size: 13px;
-  }
-  
-  .footerLink {
+}
+
+.footerLink {
     color: #0b3a6a;
     text-decoration: underline;
     text-underline-offset: 3px;
-  }
-  
-  .dot {
+}
+
+.dot {
     opacity: 0.7;
-  }
-  
+}

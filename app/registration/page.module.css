@@ -1,179 +1,194 @@
-/* same as login for consistency */
+/* page.module.css - updated for cleaner, minimal gov-style look */
+
+/* Page background and text */
 .page {
-    min-height: 100vh;
-    background: #f6f7f9;
-    color: #0b1f33;
-  }
-  
-  .header {
-    background: #ffffff;
-    border-bottom: 1px solid #e4e8ee;
-  }
-  
-  .brand {
-    max-width: 980px;
-    margin: 0 auto;
-    padding: 18px 20px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  
-  .brandMark {
-    width: 34px;
-    height: 34px;
-    border-radius: 6px;
-    background: #0b3a6a;
-  }
-  
-  .brandText {
-    line-height: 1.2;
-  }
-  
-  .govName {
-    font-size: 13px;
-    letter-spacing: 0.02em;
-    color: #2b3e55;
-  }
-  
-  .appName {
-    font-size: 16px;
-    font-weight: 700;
-    color: #0b1f33;
-  }
-  
-  .container {
-    max-width: 980px;
-    margin: 0 auto;
-    padding: 36px 20px;
-    display: flex;
-    justify-content: center;
-  }
-  
-  .card {
-    width: 100%;
-    max-width: 520px;
-    background: #ffffff;
-    border: 1px solid #e4e8ee;
-    border-radius: 14px;
-    padding: 26px 26px 22px;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
-  }
-  
-  .title {
-    font-size: 24px;
-    margin: 0 0 6px;
-  }
-  
-  .subtitle {
-    margin: 0 0 18px;
-    color: #40576f;
-    font-size: 14px;
-  }
-  
-  .alert {
-    border: 1px solid #f1b7b7;
-    background: #fff5f5;
-    color: #7a1f1f;
-    border-radius: 10px;
-    padding: 10px 12px;
-    margin-bottom: 14px;
-    font-size: 14px;
-  }
-  
-  .form {
-    display: grid;
-    gap: 14px;
-  }
-  
-  .field {
-    display: grid;
-    gap: 6px;
-  }
-  
-  .label {
-    font-size: 14px;
-    font-weight: 600;
-    color: #0b1f33;
-  }
-  
-  .input {
-    width: 100%;
-    border: 1px solid #cfd8e3;
-    border-radius: 10px;
-    padding: 12px 12px;
-    font-size: 15px;
-    background: #ffffff;
-    color: #0b1f33;
-  }
-  
-  .input::placeholder {
-    color: #7b8ea3;
-  }
-  
-  .input:focus {
-    outline: 3px solid rgba(11, 58, 106, 0.25);
-    border-color: #0b3a6a;
-  }
-  
-  .primaryButton {
-    width: 100%;
-    border: none;
-    border-radius: 10px;
-    padding: 12px 14px;
-    font-size: 15px;
-    font-weight: 700;
-    background: #0b3a6a;
-    color: #ffffff;
-    cursor: pointer;
-  }
-  
-  .primaryButton:disabled {
-    opacity: 0.65;
-    cursor: not-allowed;
-  }
-  
-  .linksRow {
-    display: flex;
-    justify-content: space-between;
-    gap: 14px;
-    font-size: 14px;
-  }
-  
-  .link {
-    color: #0b3a6a;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-  
-  .helpText {
-    margin: 4px 0 0;
-    font-size: 12px;
-    color: #566b82;
-  }
-  
-  .footer {
-    margin-top: 12px;
-    padding: 18px 20px 26px;
-    color: #5c728a;
-  }
-  
-  .footerInner {
-    max-width: 980px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 13px;
-  }
-  
-  .footerLink {
-    color: #0b3a6a;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-  
-  .dot {
-    opacity: 0.7;
-  }
-  
+  min-height: 100vh;
+  background: #f6f7f9;
+  color: #0b1f33;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Header / brand */
+.header {
+  background: #ffffff;
+  border-bottom: 1px solid #e4e8ee;
+}
+
+.brand {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brandMark {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #0b3a6a;
+}
+
+.brandText {
+  line-height: 1.2;
+}
+
+.govName {
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: #2b3e55;
+}
+
+.appName {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0b1f33;
+}
+
+/* Container & card */
+.container {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 36px 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.card {
+  width: 100%;
+  max-width: 520px;
+  background: #ffffff;
+  border: 1px solid #e4e8ee;
+  border-radius: 16px;
+  padding: 32px 28px;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+}
+
+/* Form headings */
+.title {
+  font-size: 24px;
+  margin: 0 0 8px;
+}
+
+.subtitle {
+  margin: 0 0 20px;
+  color: #40576f;
+  font-size: 14px;
+}
+
+/* Error alert */
+.alert {
+  border: 1px solid #f1b7b7;
+  background: #fff5f5;
+  color: #7a1f1f;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+/* Form layout */
+.form {
+  display: grid;
+  gap: 16px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0b1f33;
+}
+
+.input {
+  width: 100%;
+  border: 1px solid #cfd8e3;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 15px;
+  background: #ffffff;
+  color: #0b1f33;
+}
+
+.input::placeholder {
+  color: #7b8ea3;
+}
+
+.input:focus {
+  outline: 3px solid rgba(11, 58, 106, 0.25);
+  border-color: #0b3a6a;
+}
+
+/* Primary button */
+.primaryButton {
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 15px;
+  font-weight: 700;
+  background: #0b3a6a;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.primaryButton:hover {
+  background: #0a2f57;
+}
+
+.primaryButton:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Links row */
+.linksRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  font-size: 14px;
+}
+
+.link {
+  color: #0b3a6a;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.helpText {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: #566b82;
+}
+
+/* Footer */
+.footer {
+  margin-top: 24px;
+  padding: 18px 20px 26px;
+  color: #5c728a;
+}
+
+.footerInner {
+  max-width: 980px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.footerLink {
+  color: #0b3a6a;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.dot {
+  opacity: 0.7;
+}
