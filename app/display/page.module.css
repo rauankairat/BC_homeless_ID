@@ -1,0 +1,82 @@
+/* Board container inside card */
+.board {
+  width: 100%;
+  border-top: 2px solid #0b3a6a;
+  border-left: 2px solid #0b3a6a;
+  display: grid;
+  margin-top: 20px;
+  font-size: 14px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+/* Header row */
+.boardHeader {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  background: #0b3a6a;
+  color: white;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 10px 12px;
+}
+
+/* Individual package row */
+.boardRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  padding: 10px 12px;
+  border-right: 2px solid #0b3a6a;
+  border-bottom: 2px solid #0b3a6a;
+  align-items: center;
+}
+
+/* Alternating row colors */
+.boardRow:nth-child(even) {
+  background: #5e6675;
+}
+
+/* Status badges */
+.badgeOk {
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: #0b3a6a;
+  color: white;
+  font-weight: 600;
+  text-transform: capitalize;
+  font-size: 12px;
+  text-align: center;
+}
+
+.badgeInfo {
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: #2b6cb0;
+  color: white;
+  font-weight: 600;
+  text-transform: capitalize;
+  font-size: 12px;
+  text-align: center;
+}
+
+.badgeMuted {
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: #6c757d;
+  color: white;
+  font-weight: 600;
+  text-transform: capitalize;
+  font-size: 12px;
+  text-align: center;
+}
+
+/* Optional: scrollable board if too many packages */
+.board {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Add subtle hover effect */
+.boardRow:hover {
+  background: #1d4475;
+}
