@@ -23,19 +23,19 @@ export async function GET(req: Request) {
 
     const packages = await db.package.findMany({
       where: Object.keys(whereClause).length > 0 ? whereClause : undefined,
-      include: { 
-        personal: { 
-          select: { 
-            first_name: true, 
-            last_name: true 
-          } 
-        } 
+      include: {
+        personal: {
+          select: {
+            first_name: true,
+            last_name: true
+          }
+        }
       },
       orderBy: { arrival_date: "desc" },
       take: 100,
     });
 
-    const formattedPackages = packages.map((p) => ({
+    const formattedPackages = packages.map((p: any) => ({
       package_id: p.package_id,
       personal_id: p.personal_id,
       recipient_name: `${p.personal.first_name} ${p.personal.last_name}`,

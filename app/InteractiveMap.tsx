@@ -8,7 +8,7 @@ interface Shelter {
   address: string;
   lat: number;
   lng: number;
-
+  services?: string;
 }
 
 interface InteractiveMapProps {
@@ -26,6 +26,7 @@ export default function InteractiveMap({ shelters, highlightedShelterId }: Inter
 
     const initMap = async () => {
       const L = (await import("leaflet")).default;
+      // @ts-expect-error -- leaflet css import not recognized by next.js types
       await import("leaflet/dist/leaflet.css");
 
       delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -53,8 +54,8 @@ export default function InteractiveMap({ shelters, highlightedShelterId }: Inter
 
         const icon = isHighlighted
           ? L.divIcon({
-              className: "custom-marker",
-              html: `
+            className: "custom-marker",
+            html: `
                 <style>
                   @keyframes pulse {
                     0% {
@@ -79,16 +80,16 @@ export default function InteractiveMap({ shelters, highlightedShelterId }: Inter
                   animation: pulse 2s infinite;
                 "></div>
               `,
-              iconSize: [32, 32],
-              iconAnchor: [16, 32],
-            })
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+          })
           : L.icon({
-              iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-              iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-              shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-              iconSize: [25, 41],
-              iconAnchor: [12, 41],
-            });
+            iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+            iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+            shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+          });
 
         const marker = L.marker([shelter.lat, shelter.lng], { icon })
           .addTo(mapInstanceRef.current)
@@ -96,9 +97,11 @@ export default function InteractiveMap({ shelters, highlightedShelterId }: Inter
             <div style="font-family: sans-serif;">
               <strong style="font-size: 14px;">${shelter.name}</strong><br/>
               <span style="font-size: 12px; color: #666;">${shelter.address}</span><br/>
+              ${shelter.services ? `
               <span style="font-size: 12px; margin-top: 4px; display: block;">
                 <strong>Services:</strong> ${shelter.services}
               </span>
+              ` : ''}
               ${isHighlighted ? '<br/><span style="color: #ef4444; font-weight: bold;">📬 Mail Location</span>' : ''}
             </div>
           `);

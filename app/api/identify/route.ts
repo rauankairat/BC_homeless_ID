@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/prisma";
 
 function euclidean(a: number[], b: number[]) {
   let s = 0;
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     );
   }
 
-  const rows = await prisma.faceDescriptor.findMany({
+  const rows = await db.faceDescriptor.findMany({
     include: { user: true },
   });
 
@@ -35,16 +35,20 @@ export async function POST(req: Request) {
 
   let best = {
     userId: rows[0].userId,
-    label: (rows[0].user as any)?.name ?? (rows[0].user as any)?.email ?? "user",
+    label: (rows[0].user && "first_name" in rows[0].user && "last_name" in rows[0].user)
+      ? `${(rows[0].user as any).first_name} ${(rows[0].user as any).last_name}`
+      : (rows[0].user as any)?.email ?? "user",
     distance: Number.POSITIVE_INFINITY,
   };
 
   for (const r of rows) {
-    const dist = euclidean(descriptor, r.descriptor);
+    const dist = euclidean(descriptor, r.descriptor as unknown as number[]);
     if (dist < best.distance) {
       best = {
         userId: r.userId,
-        label: (r.user as any)?.name ?? (r.user as any)?.email ?? "user",
+        label: (r.user && "first_name" in r.user && "last_name" in r.user)
+          ? `${(r.user as any).first_name} ${(r.user as any).last_name}`
+          : (r.user as any)?.email ?? "user",
         distance: dist,
       };
     }

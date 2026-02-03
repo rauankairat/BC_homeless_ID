@@ -76,7 +76,7 @@ export default function ProfileLookup() {
 
   const handleSearch = (value: string) => {
     setSearchQuery(value);
-    
+
     if (!value.trim()) {
       setSearchResults([]);
       setSelectedProfile(null);
@@ -90,7 +90,7 @@ export default function ProfileLookup() {
     );
 
     setSearchResults(filtered);
-    
+
     if (filtered.length === 1) {
       setSelectedProfile(filtered[0]);
     } else if (!filtered.some(p => p.personal_id === selectedProfile?.personal_id)) {
@@ -100,10 +100,10 @@ export default function ProfileLookup() {
 
   const handleSelectProfile = (profile: ProfileData) => {
     setSelectedProfile(profile);
-    
+
     setTimeout(() => {
-      mapSectionRef.current?.scrollIntoView({ 
-        behavior: 'smooth', 
+      mapSectionRef.current?.scrollIntoView({
+        behavior: 'smooth',
         block: 'center',
         inline: 'nearest'
       });
@@ -113,8 +113,8 @@ export default function ProfileLookup() {
   useEffect(() => {
     if (selectedProfile && mapSectionRef.current) {
       setTimeout(() => {
-        mapSectionRef.current?.scrollIntoView({ 
-          behavior: 'smooth', 
+        mapSectionRef.current?.scrollIntoView({
+          behavior: 'smooth',
           block: 'center',
           inline: 'nearest'
         });
@@ -167,11 +167,10 @@ export default function ProfileLookup() {
                     <div
                       key={profile.personal_id}
                       onClick={() => handleSelectProfile(profile)}
-                      className={`border rounded-md p-3 cursor-pointer transition-all ${
-                        selectedProfile?.personal_id === profile.personal_id
+                      className={`border rounded-md p-3 cursor-pointer transition-all ${selectedProfile?.personal_id === profile.personal_id
                           ? "border-black bg-gray-100 shadow-md"
                           : "border-gray-200 bg-white hover:shadow-md"
-                      }`}
+                        }`}
                     >
                       <h3 className="font-semibold text-sm mb-1">{profile.name}</h3>
                       <p className="text-xs text-gray-600 mb-1">{profile.personal_id}</p>
@@ -195,18 +194,18 @@ export default function ProfileLookup() {
               <div ref={mapSectionRef} className="border border-gray-200 rounded-lg overflow-hidden bg-white shadow-lg">
                 <div className="p-4 bg-gray-50 border-b">
                   <h2 className="text-lg font-semibold">
-                    {selectedProfile 
-                      ? `Mail Location: ${selectedProfile.shelter_name}` 
+                    {selectedProfile
+                      ? `Mail Location: ${selectedProfile.shelter_name}`
                       : "Victoria BC Homeless Shelters"}
                   </h2>
                   {selectedProfile && (
                     <p className="text-xs text-gray-600 mt-1">
-                      Showing where {selectedProfile.name}'s mail is stored
+                      Showing where {selectedProfile.name}&apos;s mail is stored
                     </p>
                   )}
                 </div>
-                <InteractiveMap 
-                  shelters={shelters} 
+                <InteractiveMap
+                  shelters={shelters}
                   highlightedShelterId={selectedProfile?.shelter_id}
                 />
               </div>

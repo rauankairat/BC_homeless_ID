@@ -48,8 +48,19 @@ model PersonalInfo {
   consent    Consent    @relation(fields: [consent_id], references: [consent_id], onDelete: Restrict, onUpdate: Cascade)
   shelter    Shelter    @relation(fields: [shelter_id], references: [shelter_id], onDelete: Restrict, onUpdate: Cascade)
   packages   Package[]
+  faceDescriptors FaceDescriptor[]
 
   @@map("personal_info")
+}
+
+model FaceDescriptor {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  descriptor  Float[]
+  userId      String       @db.Uuid
+  user        PersonalInfo @relation(fields: [userId], references: [personal_id])
+  createdAt   DateTime     @default(now()) @db.Timestamptz(6)
+
+  @@map("face_descriptor")
 }
 
 model Biometrics {

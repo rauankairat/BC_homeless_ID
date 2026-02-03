@@ -15,21 +15,21 @@ export async function GET(req: Request) {
     const packages = await db.package.findMany({
       where: uuid
         ? {
-            OR: [{ package_id: q }, { personal_id: q }],
-          }
+          OR: [{ package_id: q }, { personal_id: q }],
+        }
         : {
-            personal: {
-              is: {
-                OR: [
-                  { first_name: { contains: q, mode: "insensitive" } },
-                  { last_name: { contains: q, mode: "insensitive" } },
-                  { aliases: { has: q } },
-                  { past_names: { has: q } },
-                  { past_surnames: { has: q } },
-                ],
-              },
+          personal: {
+            is: {
+              OR: [
+                { first_name: { contains: q, mode: "insensitive" } },
+                { last_name: { contains: q, mode: "insensitive" } },
+                { aliases: { has: q } },
+                { past_names: { has: q } },
+                { past_surnames: { has: q } },
+              ],
             },
           },
+        },
 
       // ✅ select ONLY what you want to output
       select: {
@@ -48,9 +48,9 @@ export async function GET(req: Request) {
     // ✅ output ONLY person + biometrics_id
     return NextResponse.json(
       packages
-        .map((p) => p.personal)
-        .filter((x): x is NonNullable<typeof x> => Boolean(x))
-        .map((p) => ({
+        .map((p: any) => p.personal)
+        .filter((x: any): x is NonNullable<typeof x> => Boolean(x))
+        .map((p: any) => ({
           biometrics_id: p.biometrics_id,
           person: `${p.first_name} ${p.last_name}`.trim(),
         }))
