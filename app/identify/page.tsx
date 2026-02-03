@@ -1,13 +1,16 @@
+<<<<<<< HEAD
 "use client";
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+=======
+>>>>>>> parent of eda0109 (Add Feature to add people foro face recognition)
 import FaceDetection from "../components/FaceDetection";
-import RegisterPersonInline from "../components/RegisterPersonInline";
 
 type Mode = "recognize" | "enroll";
 
 export default function IdentifyPage() {
+<<<<<<< HEAD
   const [mode, setMode] = useState<Mode>("recognize");
 
   const modeLabel = useMemo(() => {
@@ -159,4 +162,7 @@ export default function IdentifyPage() {
       </footer>
     </div>
   );
+=======
+  return <FaceDetection />;
+>>>>>>> parent of eda0109 (Add Feature to add people foro face recognition)
 }

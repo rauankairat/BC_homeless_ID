@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { NextResponse } from "next/server";
 import path from "path";
 import fs from "fs/promises";
@@ -93,3 +94,5 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: "Server error" }, { status: 500 });
   }
 }
+=======
+>>>>>>> parent of eda0109 (Add Feature to add people foro face recognition)
